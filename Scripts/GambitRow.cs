@@ -18,6 +18,28 @@ namespace jmayberry.GambitSystem {
 		public C condition;
 		public A action;
 
+        public GambitRow() {
+        }
+
+        public GambitRow(C condition, A action) {
+            this.condition = condition;
+            this.action = action;
+        }
+
+        public GambitRow(C condition, A action, bool isEnabled, bool isLinked) {
+			this.isEnabled = isEnabled;
+			this.isLinked = isLinked;
+			this.condition = condition;
+			this.action = action;
+		}
+
+		public GambitRow(GambitRow<C,A> duplicateFrom) {
+			this.isEnabled = duplicateFrom.isEnabled;
+			this.isLinked = duplicateFrom.isLinked;
+			this.condition = duplicateFrom.condition;
+			this.action = duplicateFrom.action;
+		}
+
 		// Part of the ISpawnable interface; called when a new row is populated
 		public void OnSpawn(object spawner) {
 		}
@@ -25,6 +47,8 @@ namespace jmayberry.GambitSystem {
 		// Part of the ISpawnable interface; called when a new row is not currently needed
 		public void OnDespawn(object spawner) {
 		}
+
+		public abstract GambitRow<C, A> CreateDuplicate();
 
 		// When implemented, this should have a switch case that checks what to do based on which enum was selected by the conditionSelector
 		public abstract bool CheckCondition(IGambitContext context);
@@ -49,117 +73,93 @@ namespace jmayberry.GambitSystem {
 			return true;
 		}
 
-        public void Clear() {
-            this.isEnabled = false;
-            this.isLinked = false;
-            this.condition = (C)(object)(0);
-            this.action = (A)(object)(0);
-        }
+		public void Clear() {
+			this.isEnabled = false;
+			this.isLinked = false;
+			this.condition = (C)(object)(0);
+			this.action = (A)(object)(0);
+		}
 	}
 
-	// Attach this to the prefab that represents a single row in the gambit UI
-    public class GambitUIRow<C,A> : MonoBehaviour, ISpawnable where C : Enum where A : Enum {
-        public Dropdown conditionSelector;
-        public Dropdown actionSelector;
-        public Button enableButton;
+    // Attach this to the prefab that represents a single row in the gambit UI
+    public abstract class GambitUIRow<C,A> : MonoBehaviour, ISpawnable where C : Enum where A : Enum {
+		public Dropdown conditionSelector;
+		public Dropdown actionSelector;
+		public Button enableButton;
 
-        private GambitRow<C,A> rowData;
-        internal UnityEvent OnRowModified; // Used to add a new row to the UI if this was the last row
-       
-        public void SetRowData(GambitRow<C, A> rowData) {
-            this.rowData = rowData;
-            this.UpdateUIFromData();
-        }
+		private GambitRow<C,A> rowData;
+		internal UnityEvent OnRowModified; // Used to add a new row to the UI if this was the last row
+	   
+		public void SetRowData(GambitRow<C, A> rowData) {
+			this.rowData = rowData;
+			this.UpdateUIFromData();
+		}
 
-        private void UpdateUIFromData() {
-            this.enableButton.GetComponentInChildren<Text>().text = (this.rowData.isEnabled ? "On" : "Off");
-            this.conditionSelector.value = (int)(object)this.rowData.condition;
-            this.actionSelector.value = (int)(object)this.rowData.action;
-        }
+		private void UpdateUIFromData() {
+			this.enableButton.GetComponentInChildren<Text>().text = (this.rowData.isEnabled ? "On" : "Off");
+			this.conditionSelector.value = (int)(object)this.rowData.condition;
+			this.actionSelector.value = (int)(object)this.rowData.action;
+		}
 
-        public void OnSpawn(object spawner) {
-            this.conditionSelector.gameObject.SetActive(true);
-            this.actionSelector.gameObject.SetActive(true);
-            this.enableButton.gameObject.SetActive(true);
+		public void OnSpawn(object spawner) {
+			this.conditionSelector.gameObject.SetActive(true);
+			this.actionSelector.gameObject.SetActive(true);
+			this.enableButton.gameObject.SetActive(true);
 
-            this.conditionSelector.onValueChanged.AddListener(this.OnConditionModified);
-            this.actionSelector.onValueChanged.AddListener(this.OnActionModified);
-            this.enableButton.onClick.AddListener(this.OnEnableModified);
-        }
+			this.conditionSelector.onValueChanged.AddListener(this.OnConditionModified);
+			this.actionSelector.onValueChanged.AddListener(this.OnActionModified);
+			this.enableButton.onClick.AddListener(this.OnEnableModified);
+		}
 
-        public void OnDespawn(object spawner) {
-            this.conditionSelector.gameObject.SetActive(false);
-            this.actionSelector.gameObject.SetActive(false);
-            this.enableButton.gameObject.SetActive(false);
+		public void OnDespawn(object spawner) {
+			this.conditionSelector.gameObject.SetActive(false);
+			this.actionSelector.gameObject.SetActive(false);
+			this.enableButton.gameObject.SetActive(false);
 
-            this.conditionSelector.onValueChanged.RemoveListener(this.OnConditionModified);
-            this.actionSelector.onValueChanged.RemoveListener(this.OnActionModified);
-            this.enableButton.onClick.RemoveListener(this.OnEnableModified);
-        }
+			this.conditionSelector.onValueChanged.RemoveListener(this.OnConditionModified);
+			this.actionSelector.onValueChanged.RemoveListener(this.OnActionModified);
+			this.enableButton.onClick.RemoveListener(this.OnEnableModified);
+		}
 
-        private void OnConditionModified(int value) {
-            this.rowData.condition = (C)(object)value;
-            this.OnRowModified.Invoke();
-        }
+		private void OnConditionModified(int value) {
+			this.rowData.condition = (C)(object)value;
+			this.OnRowModified.Invoke();
+		}
 
-        private void OnActionModified(int value) {
-            this.rowData.action = (A)(object)value;
-            this.OnRowModified.Invoke();
-        }
+		private void OnActionModified(int value) {
+			this.rowData.action = (A)(object)value;
+			this.OnRowModified.Invoke();
+		}
 
-        private void OnEnableModified() {
-            this.rowData.isEnabled = !this.rowData.isEnabled;
-            this.enableButton.GetComponentInChildren<Text>().text = (this.rowData.isEnabled ? "On" : "Off");
-        }
+		private void OnEnableModified() {
+			this.rowData.isEnabled = !this.rowData.isEnabled;
+			this.enableButton.GetComponentInChildren<Text>().text = (this.rowData.isEnabled ? "On" : "Off");
+		}
 
-        public void Copy(GambitManagerBase<C, A> gambitManager) {
-            gambitManager.CopyToClipboard(this.rowData);
-        }
+        // Should call the gambit manager's copy method
+        public abstract void Copy(GambitManagerBase<C, A> gambitManager);
+
+        // Should call the gambit manager's copy method
+        public abstract void Paste(GambitManagerBase<C, A> gambitManager);
+
+        // Should call the gambit manager's copy method
+        public abstract void Duplicate(GambitManagerBase<C, A> gambitManager);
 
         public void Clear() {
-            this.rowData.Clear();
-            this.UpdateUIFromData();
-        }
+			this.rowData.Clear();
+			this.UpdateUIFromData();
+		}
+	}
 
-        public void OnContextMenuUpdated() {
-            string selectedOption = this.menuDroplist.options[this.menuDroplist.value].text;
-            switch (selectedOption) {
-                case "Copy":
-                    break;
-
-                case "Paste":
-                    if (GambitUIGrid.GetClipboardData() != null) {
-                        this.rowData = GambitUIGrid.GetClipboardData();
-                        UpdateUIFromData();
-                        parent.OnRowModified(this);
-                    }
-                    break;
-
-                case "Clear":
-                    this.rowData = new GambitUIRowData(); // Reset data
-                    UpdateUIFromData();
-                    parent.OnRowModified(this);
-                    break;
-
-                case "Duplicate":
-                    parent.DuplicateRow(this.rowData);
-                    break;
-            }
-
-            // Reset the dropdown to its default state
-            this.menuDroplist.value = 0;
-        }
-    }
-
-    public class GambitManagerBase<C,A> : MonoBehaviour where C : Enum where A : Enum {
+	public abstract class GambitManagerBase<C,A> : MonoBehaviour where C : Enum where A : Enum {
 		public GameObject rowContainerRoot; // Could be a ScrollView
 		public GameObject rowContainer; // Could be a VerticalLayoutGroup
-        public GambitUIRow<C,A> rowPrefab;
+		public GambitUIRow<C,A> rowPrefab;
 
 		private UnitySpawner<GambitUIRow<C,A>> rowList;
-        private static GambitRow<C,A> clipboardRowData;
+		private static GambitRow<C,A> clipboardRowData;
 
-        public static GambitManagerBase<C,A> instance { get; private set; }
+		public static GambitManagerBase<C,A> instance { get; private set; }
 		private void Awake() {
 			if (instance != null) {
 				Debug.LogError("Found more than one GambitManager in the scene.");
@@ -168,84 +168,63 @@ namespace jmayberry.GambitSystem {
 			instance = this;
 
 			this.rowList = new UnitySpawner<GambitUIRow<C,A>>();
-        }
+		}
 
-        private void Start() {
+		private void Start() {
 			this.rowList.SetPrefabDefault(this.rowPrefab);
-        }
-
-        public bool EvaluateGambits(IGambitContext context, List<GambitRow<C,A>> gambitRows) {
-			bool previousWasLinked = false;
-			bool previousLinkPassed = false;
-			foreach (var gambitRow in gambitRows) {
-				if (previousWasLinked && !previousLinkPassed) {
-					previousWasLinked = !gambitRow.isLinked; // Account for multi-line links
-					continue; // Skip this one, because the previously linked row failed it's condition
-				}
-
-				if (gambitRow.isLinked) {
-					previousLinkPassed = gambitRow.EvaluateGambit(context);
-					previousWasLinked = true;
-					continue;
-				}
-
-				if (gambitRow.EvaluateGambit(context)) {
-					return true;
-				}
-			}
-			return false;
 		}
 
 		public void ViewGambits(ref List<GambitRow<C,A>> gambitRows) {
-            // Show a container that has a scrollable list of rows populated with gambitRows.
-            // When things are edited on the UI, it should mutate the gambitRows list
+			// Show a container that has a scrollable list of rows populated with gambitRows.
+			// When things are edited on the UI, it should mutate the gambitRows list
 
-            // Populate the UI list with the gambit rows
-            this.rowList.DespawnAll();
-			
-			//foreach (GambitRow<C,A> row in gambitRows) {
-   //             GambitUIRow<C, A> row = this.rowList.Spawn();
-				
-			//}
+			// Populate the UI list with the gambit rows
+			this.rowList.DespawnAll();
 
-
+			foreach (GambitRow<C, A> row in gambitRows) {
+				GambitUIRow<C, A> rowUi = this.rowList.Spawn(Vector3.zero, this.rowContainer.transform);
+				rowUi.SetRowData(row);
+			}
 
 
-   //         foreach (GameObject child in this.rowContainer.GetComponentInChildren<GameObject>()) {
-			//	//
-			//}
-
-			//// Ensure the container that holds the gambit list is visible
-			//if (this.rowContainerRoot != null) {
-			//	this.rowContainerRoot.SetActive(true);
-			//}
+			// Ensure the container that holds the gambit list is visible
+			if (this.rowContainerRoot != null) {
+				this.rowContainerRoot.SetActive(true);
+			}
 		}
 
-        public static void CopyToClipboard(GambitRow<C,A> data) {
-            clipboardRowData = data;
+		public static void CopyToClipboard(GambitRow<C,A> data) {
+			clipboardRowData = data;
+		}
+
+		public static GambitRow<C,A> GetClipboardData() {
+			return clipboardRowData;
+		}
+
+		public void Paste(ref List<GambitRow<C, A>> gambitRows, int index) {
+			if (clipboardRowData == null) {
+				return;
+			}
+
+            gambitRows.Insert(index, clipboardRowData.CreateDuplicate());
+            this.ViewGambits(ref gambitRows); // Refresh GUI
         }
 
-        public static GambitRow<C,A> GetClipboardData() {
-            return clipboardRowData;
+        public void Duplicate(ref List<GambitRow<C, A>> gambitRows, int index) {
+            GambitRow<C, A> duplicateThis = gambitRows[index];
+            gambitRows.Insert(index, duplicateThis.CreateDuplicate());
+            this.ViewGambits(ref gambitRows); // Refresh GUI
         }
 
-
-        public void Duplicate(GambitRow<C,A> row) {
-            GambitRow<C, A> rowDuplicate = this.rowList.Spawn();
-
-
-
-
-            GameObject newRowObject = Instantiate(rowPrefab, contentPanel);
-            GambitUIRow newRow = newRowObject.GetComponent<GambitUIRow>();
-            newRow.InitializeWithData(this, new GambitUIRowData() {
-                isEnabled = dataToDuplicate.isEnabled,
-                Condition = dataToDuplicate.Condition,
-                Action = dataToDuplicate.Action,
-            });
-            rowList.Add(newRow);
+        public void Remove(ref List<GambitRow<C, A>> gambitRows, int index) {
+            gambitRows.RemoveAt(index);
+            this.ViewGambits(ref gambitRows); // Refresh GUI
         }
 
-       
+        public void Clear(ref List<GambitRow<C, A>> gambitRows, int index) {
+            GambitRow<C, A> row = gambitRows[index];
+            row.Clear();
+            this.ViewGambits(ref gambitRows); // Refresh GUI
+        }
     }
 }

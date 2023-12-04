@@ -41,11 +41,13 @@ public enum MyGambitCombatActions {
 }
 
 public class MyGambitRow : GambitRow<MyGambitConditions, MyGambitCombatActions> {
-    public MyGambitRow(Dropdown conditionSelector, Dropdown actionSelector, Button enableButton) : base(conditionSelector, actionSelector, enableButton) {
-    }
+    public MyGambitRow() : base() { }
 
-    public MyGambitRow(Dropdown conditionSelector, Dropdown actionSelector, Button enableButton, GambitRowData<MyGambitConditions, MyGambitCombatActions> rowData) : base(conditionSelector, actionSelector, enableButton, rowData) {
-    }
+    public MyGambitRow(GambitRow<MyGambitConditions, MyGambitCombatActions> duplicateFrom) : base(duplicateFrom) { }
+
+    public MyGambitRow(MyGambitConditions condition, MyGambitCombatActions action) : base(condition, action) { }
+
+    public MyGambitRow(MyGambitConditions condition, MyGambitCombatActions action, bool isEnabled, bool isLinked) : base(condition, action, isEnabled, isLinked) { }
 
     public override bool CheckCondition(IGambitContext context) {
         if (context is not AIContext aiContext) {
@@ -53,7 +55,7 @@ public class MyGambitRow : GambitRow<MyGambitConditions, MyGambitCombatActions> 
             return false;
         }
 
-        switch (rowData.condition) {
+        switch (this.condition) {
             case MyGambitConditions.HealthBelow:
                 return aiContext.Character.Health < 30;
 
@@ -61,8 +63,12 @@ public class MyGambitRow : GambitRow<MyGambitConditions, MyGambitCombatActions> 
                 return (aiContext.Target != null) && (Vector3.Distance(aiContext.Character.Position, aiContext.Target.Position) <= 30);
         }
 
-		Debug.LogError($"Unknown gambit condition {rowData.condition}");
+		Debug.LogError($"Unknown gambit condition {this.condition}");
         return false;
+    }
+
+    public override GambitRow<MyGambitConditions, MyGambitCombatActions> CreateDuplicate() {
+        return new MyGambitRow(this);
     }
 
     public override void Execute(IGambitContext context) {
@@ -71,7 +77,7 @@ public class MyGambitRow : GambitRow<MyGambitConditions, MyGambitCombatActions> 
             return;
         }
 
-        switch (rowData.action) {
+        switch (this.action) {
             case MyGambitCombatActions.Attack:
                 aiContext.Character.Attack(aiContext.Target);
                 return;
@@ -81,7 +87,7 @@ public class MyGambitRow : GambitRow<MyGambitConditions, MyGambitCombatActions> 
                 return;
         }
 
-        Debug.LogError($"Unknown gambit action {rowData.action}");
+        Debug.LogError($"Unknown gambit action {this.action}");
     }
 }
 
@@ -94,7 +100,8 @@ public class ExampleCharacter {
 
     public ExampleCharacter() {
         this.gambitRows = new List<MyGambitRow> {
-            new MyGambitRow(),
+            new MyGambitRow(){isEnabled=true, isLinked=false, condition=MyGambitConditions.EnemyInRange, action=MyGambitCombatActions.Attack},
+            new MyGambitRow(){isEnabled=true, isLinked=false, condition=MyGambitConditions.HealthBelow, action=MyGambitCombatActions.Heal},
         };
     }
 
