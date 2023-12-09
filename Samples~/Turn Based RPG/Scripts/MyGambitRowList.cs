@@ -1,22 +1,18 @@
 using System.Collections.Generic;
+using UnityEngine;
+
 
 using jmayberry.GambitSystem;
 
-public class MyGambitRowList : GambitRowList<MyGambitConditions, MyGambitCombatActions>, IGambitRowList {
-	public MyGambitRowList(List<MyGambitRow> rowList) {
-		this.gambitRowList = new List<IGambitRow>();
-		foreach (MyGambitRow row in rowList) {
-			this.gambitRowList.Add(row);
-		}
-	}
+[CreateAssetMenu(fileName = "GambitRowList", menuName = "Testing/GambitRow", order = 1)]
+public class MyGambitRowList : GambitRowList {
+    [SerializeField] public new List<MyGambitRow> gambitRowList;
 
-	public MyGambitRowList(List<string> jsonRowList) {
-		this.gambitRowList = new List<IGambitRow>();
-		foreach (string jsonRow in jsonRowList) {
-			this.gambitRowList.Add(new MyGambitRow(jsonRow));
-		}
-	}
-	public override void AddEmpty() {
-		this.gambitRowList.Add(new MyGambitRow());
-	}
+    public MyGambitRowList(List<MyGambitRow> gambitRowList) {
+        this.gambitRowList = gambitRowList;
+    }
+
+    public override GambitRow CreateEmptyRow() {
+        return new MyGambitRow();
+    }
 }

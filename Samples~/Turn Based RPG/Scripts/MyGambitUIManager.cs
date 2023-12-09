@@ -1,3 +1,3 @@
 using jmayberry.GambitSystem;
 
-public class MyGambitUIManager : GambitUIManagerBase<MyGambitConditions, MyGambitCombatActions> { }
+public class MyGambitUIManager : GambitUIManagerBase { }

@@ -20,14 +20,14 @@ public class AICharacter : MonoBehaviour, IGambitCharacter {
 		this.myGambitRowList.EvaluateGambits(context);
 	}
 
-	public IGambitRowList GetGambitRowList() {
+	public GambitRowList GetGambitRowList() {
 		return myGambitRowList;
 	}
 
-	public void SetGambitRowList(IGambitRowList gambitRowList) {
+	public void SetGambitRowList(GambitRowList gambitRowList) {
 		this.myGambitRowList.gambitRowList.Clear();
 
-		foreach (IGambitRow row in gambitRowList) {
+		foreach (MyGambitRow row in gambitRowList) {
 			this.myGambitRowList.gambitRowList.Add(row);
 		}
 	}

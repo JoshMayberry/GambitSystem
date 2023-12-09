@@ -3,39 +3,30 @@ using System.Collections.Generic;
 using System;
 using Unity.VisualScripting;
 using System.Reflection;
+using UnityEngine;
 
 namespace jmayberry.GambitSystem {
 	public interface IGambitContext {
 	}
 
-	public interface IGambitRowList {
-		public IEnumerator<IGambitRow> GetEnumerator();
-
-		public void AddEmpty();
-
-		public void Add(IGambitRow row);
-
-		public void Remove(int index);
-		public void Remove(IGambitRow row);
-    }
-
 	public interface IGambitCharacter {
-		public IGambitRowList GetGambitRowList();
+		public GambitRowList GetGambitRowList();
 
-		public void SetGambitRowList(IGambitRowList gambitRowList);
-
+		public void SetGambitRowList(GambitRowList gambitRowList);
 	}
 
-	public abstract class GambitRowList<C, A> : IGambitRowList where C : Enum where A : Enum {
-		public List<IGambitRow> gambitRowList;
+	public abstract class GambitRowList : ScriptableObject {
+        public List<GambitRow> gambitRowList;
 
-		public IEnumerator<IGambitRow> GetEnumerator() {
+		public abstract GambitRow CreateEmptyRow();
+
+        public IEnumerator<GambitRow> GetEnumerator() {
 			foreach (var row in gambitRowList) {
 				yield return row;
 			}
 		}
 
-		public bool EvaluateGambits(IGambitContext context) {
+        public bool EvaluateGambits(IGambitContext context) {
 			bool previousWasLinked = false;
 			bool previousLinkPassed = false;
 			foreach (var gambitRow in this.gambitRowList) {
@@ -57,7 +48,7 @@ namespace jmayberry.GambitSystem {
 			return false;
 		}
 
-		public void Paste(IGambitRow newRow, int index) {
+		public void Paste(GambitRow newRow, int index) {
 			this.gambitRowList[index] = newRow;
 		}
 
@@ -65,7 +56,7 @@ namespace jmayberry.GambitSystem {
 			this.gambitRowList.Insert(index, this.gambitRowList[index].CreateDuplicate());
         }
 
-        public void Remove(IGambitRow row) {
+        public void Remove(GambitRow row) {
             this.gambitRowList.Remove(row);
         }
 
@@ -77,9 +68,11 @@ namespace jmayberry.GambitSystem {
 			this.gambitRowList[index].Clear();
 		}
 
-		public abstract void AddEmpty();
+        public void AddEmpty() {
+            this.gambitRowList.Add(this.CreateEmptyRow());
+        }
 
-		public void Add(IGambitRow row) {
+        public void Add(GambitRow row) {
 			this.gambitRowList.Add(row);
 		}
 	}

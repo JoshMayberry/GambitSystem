@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0d053475ea4f4b459cb6f315269b577, type: 3}
+  m_Name: GambitRowList
+  m_EditorClassIdentifier: 
+  gambitRowList:
+  - isEnabled: 0
+    isLinked: 0
+    condition: 0
+    action: 1
+  - isEnabled: 1
+    isLinked: 0
+    condition: 1
+    action: 0
+  - isEnabled: 0
+    isLinked: 1
+    condition: 0
+    action: 0

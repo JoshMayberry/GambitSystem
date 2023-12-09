@@ -7,15 +7,15 @@ using jmayberry.Spawner;
 
 namespace jmayberry.GambitSystem {
 	// Attach this to the prefab that represents a single row in the gambit UI
-	public abstract class GambitUIRow<C, A> : MonoBehaviour, ISpawnable where C : Enum where A : Enum {
+	public abstract class GambitUIRow : MonoBehaviour, ISpawnable {
 		public Dropdown conditionSelector;
 		public Dropdown actionSelector;
 		public Button enableButton;
 
-		private IGambitRow rowData;
+		private GambitRow rowData;
 		internal UnityEvent OnRowModified; // Used to add a new row to the UI if this was the last row
 
-		public void SetRowData(IGambitRow rowData) {
+		public void SetRowData(GambitRow rowData) {
 			this.rowData = rowData;
 			this.UpdateUIFromData();
 		}
@@ -47,12 +47,12 @@ namespace jmayberry.GambitSystem {
 		}
 
 		private void OnConditionModified(int value) {
-			this.rowData.SetCondition((C)(object)value);
+			this.rowData.SetCondition((Enum)(object)value);
 			this.OnRowModified.Invoke();
 		}
 
 		private void OnActionModified(int value) {
-			this.rowData.SetAction((A)(object)value);
+			this.rowData.SetAction((Enum)(object)value);
 			this.OnRowModified.Invoke();
 		}
 

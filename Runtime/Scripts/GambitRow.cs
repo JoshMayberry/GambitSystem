@@ -5,53 +5,29 @@ using jmayberry.Spawner;
 
 
 namespace jmayberry.GambitSystem {
-	public interface IGambitRow {
-		bool EvaluateGambit(IGambitContext context);
-
-		void Clear();
-
-		bool IsLinked();
-
-		IGambitRow CreateDuplicate();
-
-		string ToJSON();
-
-		void FromJSON(string payload);
-
-		void SetCondition(Enum selection);
-		Enum GetCondition();
-
-		void SetAction(Enum selection);
-		Enum GetAction();
-
-		void SetIsLinked(bool state);
-		bool GetIsLinked();
-
-		void SetIsEnabled(bool state);
-		bool GetIsEnabled();
-	}
 
 	[System.Serializable]
-	public abstract class GambitRow<C, A> : ISpawnable, IGambitRow where C : Enum where A : Enum {
+    public abstract class GambitRow : ISpawnable {
 		public bool isEnabled;
 		public bool isLinked; // Used to create multi-condition logic
-		public C condition;
-		public A action;
+		public Enum condition;
+		public Enum action;
 
 		public GambitRow() { }
 
-		public GambitRow(C condition, A action) {
+		public GambitRow(Enum condition, Enum action) {
 			this.condition = condition;
 			this.action = action;
 		}
 
-		public GambitRow(C condition, A action, bool isEnabled, bool isLinked) {
+		public GambitRow(Enum condition, Enum action, bool isEnabled, bool isLinked) {
 			this.isEnabled = isEnabled;
 			this.isLinked = isLinked;
 			this.condition = condition;
 			this.action = action;
 		}
-		public GambitRow(string jsonPayload) {
+
+        public GambitRow(string jsonPayload) {
 			this.FromJSON(jsonPayload);
 		}
 
@@ -69,7 +45,7 @@ namespace jmayberry.GambitSystem {
 		}
 
 		public void FromJSON(string payload) {
-			var data = JsonUtility.FromJson<GambitRow<C,A>>(payload);
+			var data = JsonUtility.FromJson<GambitRow>(payload);
 
 			this.isEnabled = data.isEnabled;
 			this.isLinked = data.isLinked;
@@ -83,7 +59,7 @@ namespace jmayberry.GambitSystem {
 		// Part of the ISpawnable interface; called when a new row is not currently needed
 		public void OnDespawn(object spawner) { }
 
-		public abstract IGambitRow CreateDuplicate();
+		public abstract GambitRow CreateDuplicate();
 
 		// When implemented, this should have a switch case that checks what to do based on which enum was selected by the conditionSelector
 		public abstract bool CheckCondition(IGambitContext context);
@@ -111,12 +87,12 @@ namespace jmayberry.GambitSystem {
 		public void Clear() {
 			this.isEnabled = false;
 			this.isLinked = false;
-			this.condition = (C)(object)(0);
-			this.action = (A)(object)(0);
+			this.condition = (Enum)(object)(0);
+			this.action = (Enum)(object)(0);
 		}
 
 		public void SetCondition(Enum selection) {
-			this.condition = (C)selection;
+			this.condition = selection;
 		}
 
 		public Enum GetCondition() {
@@ -124,7 +100,7 @@ namespace jmayberry.GambitSystem {
 		}
 
 		public void SetAction(Enum selection) {
-			this.action = (A)selection;
+			this.action = selection;
 		}
 
 		public Enum GetAction() {

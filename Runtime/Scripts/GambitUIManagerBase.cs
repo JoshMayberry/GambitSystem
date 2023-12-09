@@ -4,15 +4,15 @@ using System;
 using jmayberry.Spawner;
 
 namespace jmayberry.GambitSystem {
-	public abstract class GambitUIManagerBase<C, A> : MonoBehaviour where C : Enum where A : Enum {
+	public abstract class GambitUIManagerBase : MonoBehaviour {
 		public GameObject rowContainerRoot; // Could be a ScrollView
 		public GameObject rowContainer; // Could be a VerticalLayoutGroup
-		public GambitUIRow<C, A> uiRowPrefab;
+		public GambitUIRow uiRowPrefab;
 
-		private UnitySpawner<GambitUIRow<C, A>> rowList;
+		private UnitySpawner<GambitUIRow> rowList;
 		private static string clipboardRowData;
 
-		public static GambitUIManagerBase<C, A> instance { get; private set; }
+		public static GambitUIManagerBase instance { get; private set; }
 		private void Awake() {
 			if (instance != null) {
 				Debug.LogError("Found more than one GambitManager in the scene.");
@@ -20,22 +20,22 @@ namespace jmayberry.GambitSystem {
 
 			instance = this;
 
-			this.rowList = new UnitySpawner<GambitUIRow<C, A>>();
+			this.rowList = new UnitySpawner<GambitUIRow>();
 		}
 
 		private void Start() {
 			this.rowList.SetPrefabDefault(this.uiRowPrefab);
 		}
 
-		public void ViewGambits(IGambitRowList gambitRowList) {
+		public void ViewGambits(GambitRowList gambitRowList) {
 			// Show a container that has a scrollable list of rows populated with gambitRows.
 			// When things are edited on the UI, it should mutate the gambitRows list
 
 			// Populate the UI list with the gambit rows
 			this.rowList.DespawnAll();
 
-			foreach (IGambitRow row in gambitRowList) {
-				GambitUIRow<C, A> rowUi = this.rowList.Spawn(Vector3.zero, this.rowContainer.transform);
+			foreach (GambitRow row in gambitRowList) {
+				GambitUIRow rowUi = this.rowList.Spawn(Vector3.zero, this.rowContainer.transform);
 				rowUi.SetRowData(row);
 			}
 
@@ -46,7 +46,7 @@ namespace jmayberry.GambitSystem {
 			}
 		}
 
-		public static void CopyToClipboard(IGambitRow row) {
+		public static void CopyToClipboard(GambitRow row) {
 			clipboardRowData = row.ToJSON();
 		}
 

@@ -1,6 +1,7 @@
 using UnityEngine;
 
 using jmayberry.GambitSystem;
+using System;
 
 public enum MyGambitConditions {
 	HealthBelow,
@@ -12,14 +13,16 @@ public enum MyGambitCombatActions {
 	Heal,
 }
 
-public class MyGambitRow : GambitRow<MyGambitConditions, MyGambitCombatActions>, IGambitRow {
-	public MyGambitRow() : base() { }
+[System.Serializable]
+public class MyGambitRow : GambitRow {
+    public new MyGambitConditions condition;
+    public new MyGambitCombatActions action;
 
-	public MyGambitRow(string jsonPayload) : base(jsonPayload) { }
+    public MyGambitRow(Enum condition, Enum action, bool isEnabled, bool isLinked) : base(condition, action, isEnabled, isLinked) {}
 
-	public MyGambitRow(MyGambitConditions condition, MyGambitCombatActions action, bool isEnabled, bool isLinked) : base(condition, action, isEnabled, isLinked) { }
+    public MyGambitRow() : base() {}
 
-	public override IGambitRow CreateDuplicate() {
+    public override GambitRow CreateDuplicate() {
 		return new MyGambitRow(this.condition, this.action, this.isEnabled, this.isLinked);
 	}
 
