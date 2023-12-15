@@ -1,0 +1,29 @@
+{
+	"name": "com.jmayberry.gambitsystem",
+	"displayName": "Gambit System",
+	"version": "1.0.1",
+	"unity": "2021.1",
+	"description": "Archetecture for customizable AI based on Final Fantasy Zodiac Age's Gambit System.",
+	"keywords": [
+		"physics",
+		"utility"
+	],
+	"dependencies": {
+	},
+	"author": {
+		"name": "jmayberry",
+		"email": "joshua.mayberry1991@gmail.com"
+	},
+	"samples": [
+		{
+			"displayName": "Tower Defense",
+			"description": "Customize the ai for towers in a tower defense game.",
+			"path": "Samples~/Tower Defense"
+		},
+		{
+			"displayName": "Turn Based RPG",
+			"description": "Customize the ai for characters in an RPG.",
+			"path": "Samples~/Turn Based RPG"
+		}
+	]
+}

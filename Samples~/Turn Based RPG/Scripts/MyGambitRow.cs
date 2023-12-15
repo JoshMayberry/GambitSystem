@@ -1,7 +1,8 @@
 using UnityEngine;
+using System;
 
 using jmayberry.GambitSystem;
-using System;
+using jmayberry.CustomAttributes;
 
 public enum MyGambitConditions {
 	HealthBelow,
@@ -14,16 +15,19 @@ public enum MyGambitCombatActions {
 }
 
 [System.Serializable]
-public class MyGambitRow : GambitRow {
-    public new MyGambitConditions condition;
-    public new MyGambitCombatActions action;
+public class MyGambitRow : GambitRow<MyGambitConditions, MyGambitCombatActions>, IGambitRow<MyGambitConditions, MyGambitCombatActions> {
+    public override MyGambitConditions condition { get => this._condition; set => this._condition = (MyGambitConditions)value; }
+    [SerializeField] private MyGambitConditions _condition;
 
-    public MyGambitRow(Enum condition, Enum action, bool isEnabled, bool isLinked) : base(condition, action, isEnabled, isLinked) {}
+    public override MyGambitCombatActions action { get => this._action; set => this._action = (MyGambitCombatActions)value; }
+    [SerializeField] private MyGambitCombatActions _action;
+
+    public MyGambitRow(MyGambitConditions condition, MyGambitCombatActions action, bool isEnabled, bool isLinked) : base(condition, action, isEnabled, isLinked) {}
 
     public MyGambitRow() : base() {}
 
-    public override GambitRow CreateDuplicate() {
-		return new MyGambitRow(this.condition, this.action, this.isEnabled, this.isLinked);
+    public override IGambitRow<MyGambitConditions, MyGambitCombatActions> CreateDuplicate() {
+		return new MyGambitRow(this._condition, this._action, this.isEnabled, this.isLinked);
 	}
 
 	public override bool CheckCondition(IGambitContext context) {

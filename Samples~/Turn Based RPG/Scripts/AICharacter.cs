@@ -20,15 +20,15 @@ public class AICharacter : MonoBehaviour, IGambitCharacter {
 		this.myGambitRowList.EvaluateGambits(context);
 	}
 
-	public GambitRowList GetGambitRowList() {
-		return myGambitRowList;
-	}
+	//public GambitRowList GetGambitRowList() {
+	//	return myGambitRowList;
+	//}
 
-	public void SetGambitRowList(GambitRowList gambitRowList) {
-		this.myGambitRowList.gambitRowList.Clear();
+	//public void SetGambitRowList(GambitRowList gambitRowList) {
+	//	this.myGambitRowList.gambitRowList.Clear();
 
-		foreach (MyGambitRow row in gambitRowList) {
-			this.myGambitRowList.gambitRowList.Add(row);
-		}
-	}
+	//	foreach (MyGambitRow row in gambitRowList) {
+	//		this.myGambitRowList.gambitRowList.Add(row);
+	//	}
+	//}
 }

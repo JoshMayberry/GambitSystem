@@ -12,16 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0d053475ea4f4b459cb6f315269b577, type: 3}
   m_Name: GambitRowList
   m_EditorClassIdentifier: 
-  gambitRowList:
-  - isEnabled: 0
-    isLinked: 0
-    condition: 0
-    action: 1
-  - isEnabled: 1
-    isLinked: 0
-    condition: 1
-    action: 0
-  - isEnabled: 0
-    isLinked: 1
-    condition: 0
-    action: 0
+  _gambitRowList:
+  - _isEnabled: 1
+    _isLinked: 0
+    _condition: 0
+    _action: 1
+  - _isEnabled: 1
+    _isLinked: 1
+    _condition: 1
+    _action: 1
+  - _isEnabled: 0
+    _isLinked: 0
+    _condition: 0
+    _action: 0
+  - _isEnabled: 0
+    _isLinked: 0
+    _condition: 0
+    _action: 0

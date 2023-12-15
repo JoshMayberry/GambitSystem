@@ -1,0 +1,17 @@
+{
+    "name": "jmayberry.GambitSystem",
+    "rootNamespace": "jmayberry.GambitSystem",
+    "references": [
+        "jmayberry.CustomAttributes",
+        "jmayberry.Spawner"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

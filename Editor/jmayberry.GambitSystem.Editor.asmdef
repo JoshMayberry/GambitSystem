@@ -1,0 +1,19 @@
+{
+    "name": "jmayberry.GambitSystem.Editor",
+    "rootNamespace": "jmayberry.GambitSystem.Editor",
+    "references": [
+        "jmayberry.GambitSystem",
+        "jmayberry.CustomAttributes"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

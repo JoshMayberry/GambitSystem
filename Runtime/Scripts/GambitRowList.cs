@@ -6,36 +6,51 @@ using System.Reflection;
 using UnityEngine;
 
 namespace jmayberry.GambitSystem {
-	public interface IGambitContext {
-	}
+    public interface IGambitRowList<T, C, A> where T : IGambitRow<C, A> where C : Enum where A : Enum {
+        List<T> gambitRowList { get; set; }
 
-	public interface IGambitCharacter {
-		public GambitRowList GetGambitRowList();
+        T CreateEmptyRow();
 
-		public void SetGambitRowList(GambitRowList gambitRowList);
-	}
+		bool EvaluateGambits(IGambitContext context);
 
-	public abstract class GambitRowList : ScriptableObject {
-        public List<GambitRow> gambitRowList;
+		void Paste(T newRow, int index);
 
-		public abstract GambitRow CreateEmptyRow();
+		void Duplicate(int index);
 
-        public IEnumerator<GambitRow> GetEnumerator() {
+		void Remove(T row);
+
+		void Remove(int index);
+
+		void Clear(int index);
+
+		void AddEmpty();
+
+		void Add(T row);
+
+    }
+
+	[System.Serializable]
+    public abstract class GambitRowList<T, C, A> : ScriptableObject, IGambitRowList<T, C, A> where T : IGambitRow<C, A> where C : Enum where A : Enum {
+        public abstract List<T> gambitRowList { get; set; }
+
+        public abstract T CreateEmptyRow();
+
+        public IEnumerator<T> GetEnumerator() {
 			foreach (var row in gambitRowList) {
 				yield return row;
 			}
 		}
 
-        public bool EvaluateGambits(IGambitContext context) {
+        public virtual bool EvaluateGambits(IGambitContext context) {
 			bool previousWasLinked = false;
 			bool previousLinkPassed = false;
-			foreach (var gambitRow in this.gambitRowList) {
+			foreach (var gambitRow in this) {
 				if (previousWasLinked && !previousLinkPassed) {
-					previousWasLinked = !gambitRow.IsLinked(); // Account for multi-line links
+					previousWasLinked = !gambitRow.isLinked; // Account for multi-line links
 					continue; // Skip this one, because the previously linked row failed it's condition
 				}
 
-				if (gambitRow.IsLinked()) {
+				if (gambitRow.isLinked) {
 					previousLinkPassed = gambitRow.EvaluateGambit(context);
 					previousWasLinked = true;
 					continue;
@@ -48,31 +63,31 @@ namespace jmayberry.GambitSystem {
 			return false;
 		}
 
-		public void Paste(GambitRow newRow, int index) {
+        public virtual void Paste(T newRow, int index) {
 			this.gambitRowList[index] = newRow;
 		}
 
-		public void Duplicate(int index) {
-			this.gambitRowList.Insert(index, this.gambitRowList[index].CreateDuplicate());
+		public virtual void Duplicate(int index) {
+			//this.gambitRowList.Insert(index, this.gambitRowList[index].CreateDuplicate());
         }
 
-        public void Remove(GambitRow row) {
+        public virtual void Remove(T row) {
             this.gambitRowList.Remove(row);
         }
 
-        public void Remove(int index) {
+        public virtual void Remove(int index) {
             this.gambitRowList.RemoveAt(index);
         }
 
-        public void Clear(int index) {
+        public virtual void Clear(int index) {
 			this.gambitRowList[index].Clear();
 		}
 
-        public void AddEmpty() {
+        public virtual void AddEmpty() {
             this.gambitRowList.Add(this.CreateEmptyRow());
         }
 
-        public void Add(GambitRow row) {
+        public virtual void Add(T row) {
 			this.gambitRowList.Add(row);
 		}
 	}
