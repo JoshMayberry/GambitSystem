@@ -29,19 +29,19 @@ namespace jmayberry.GambitSystem {
 		//}
 
         private void PopulateDropdowns() {
-            conditionSelector.ClearOptions();
-            var conditionOptions = new List<string>();
-            foreach (var condition in Enum.GetValues(typeof(MyGambitConditions))) {
-                conditionOptions.Add(condition.ToString());
-            }
-            conditionSelector.AddOptions(conditionOptions);
+            //conditionSelector.ClearOptions();
+            //var conditionOptions = new List<string>();
+            //foreach (var condition in Enum.GetValues(typeof(MyGambitConditions))) {
+            //    conditionOptions.Add(condition.ToString());
+            //}
+            //conditionSelector.AddOptions(conditionOptions);
 
-            actionSelector.ClearOptions();
-            var actionOptions = new List<string>();
-            foreach (var action in Enum.GetValues(typeof(MyGambitCombatActions))) {
-                actionOptions.Add(action.ToString());
-            }
-            actionSelector.AddOptions(actionOptions);
+            //actionSelector.ClearOptions();
+            //var actionOptions = new List<string>();
+            //foreach (var action in Enum.GetValues(typeof(MyGambitCombatActions))) {
+            //    actionOptions.Add(action.ToString());
+            //}
+            //actionSelector.AddOptions(actionOptions);
         }
 
         //private void UpdateUIFromData() {

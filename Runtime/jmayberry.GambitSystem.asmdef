@@ -3,7 +3,8 @@
     "rootNamespace": "jmayberry.GambitSystem",
     "references": [
         "jmayberry.CustomAttributes",
-        "jmayberry.Spawner"
+        "jmayberry.Spawner",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
